@@ -1,0 +1,12 @@
+/*
+ * Verifica que un job sequence tiene definido "if required, then run"
+ *
+*/
+
+item.graph.V.stage.has('stageType', 'CJobActivity').comply{"Job Activity '${it.stageName}' (${it.stageType}) no tiene definido 'if required, then run'"} {
+    if (it.('ExecutionType') == '1') {
+		return true;
+	}
+	return false;
+};
+

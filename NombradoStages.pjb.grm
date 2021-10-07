@@ -1,0 +1,41 @@
+/*
+*
+* Reglas de nombrado de Stages de acuerdo a documento Telcel
+*
+*/
+def map = [
+// Data Quality ---------------------------------------------------------------
+'CTransformerStage'              : '^TF_[1-9]00_[A-Za-z0-9_]{1,12}'  , // Transformer
+'OracleConnectorPX'              : '^DB_[1-9]00_[A-Za-z0-9_]{1,12}' , // Oracle Connector
+'PxCopy'                         : '^CO_[1-9]00_[A-Za-z0-9_]{1,12}'  , // Copy
+'PxDataSet'                      : '^DS_[1-9]00_[A-Za-z0-9_]{1,12}'  , // Data Set
+'PxSequentialFile'               : '^SF_[1-9]00_[A-Za-z0-9_]{1,12}'  , // Sequential File
+'PxJoin (Inner)'                 : '^JO_[1-9]00_[A-Za-z0-9_]{1,12}'  , // Inner join
+'PxRowGenerator'                 : '^RG_[1-9]00_[A-Za-z0-9_]{1,12}'  // Row Generator
+]
+item.graph.V.stage.comply{"${it.msg}"} {
+	if (it.stageType != null) {
+		def regex = null;
+		def eval = null;
+		def msg = null;		
+		if (map.containsKey(it.stageType)) {
+			regex = map[it.stageType];
+		}
+		if (regex != null) {
+			it.pattern = regex;
+			eval = it.stageName.matches(regex);
+			if (eval==false) {
+				msg = "${it.stageType} '${it.stageName}' (${it.stageType}) No corresponde a lineamientos Telcel '[PREFIJO]_[NUMERO CONSECUTIVO]_[DESCRIPCION]'.";
+				it.msg = msg;
+			}
+			return eval;
+		}
+		if (regex == null) {
+			msg = "${it.stageType} '${it.stageName}' No hay reglas definidas para este Stage.";			
+			it.msg = msg;
+			return false;
+		}
+	}
+	return true;
+};
+
