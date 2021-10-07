@@ -1,0 +1,11 @@
+/*
+ * Verifica que un job tenga descripciones
+ */
+
+def stageDesc = item.graph.V.Annotation.count()
+
+if (stageDesc > 0) {
+    compliance.failure("Job No tiene descripciones. ${stageDesc}")
+}
+
+
