@@ -1,0 +1,21 @@
+/*
+*
+* Reglas de nombrado de Links de acuerdo a documento Telcel
+*
+*/
+def linkName = null
+def stageD = null
+def stageI = null
+def stageStr = null
+item.graph.V.stage.as("stageV").sideEffect { stage, pipes ->
+	stageI = stage.in.stage.stageName.toSet()
+	linkName = stage.in.pin.inE.linkName.toSet()
+	stageD = stage.stageName
+	if (stageI[0]!=null) {
+		stageStr = "LK_${stageI[0][0,1,3,4,5]}_TO_${stageD[0,1,3,4,5]}"
+		if ( stageStr != linkName[0] ) {
+			compliance.failure("Nombrado del link: ${linkName[0]} no corresponde a lineamiento Telcel : LK_[PREFIJO del OBJETO ORIGEN]_TO_[PREFIJO del OBJETO DESTINO]") 
+		}
+	}	
+}
+
