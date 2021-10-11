@@ -1,0 +1,27 @@
+/*
+*
+* Verificacion de secuencias no repetidas para las reglas de nombrado de Stages de acuerdo a documento Telcel
+*
+*/
+def stageNames = [:];
+
+item.graph.V.stage.filter { stage ->
+	sec =stage.stageName[3,4,5]
+    if (stageNames[sec] == null) {
+        stageNames.put(sec, 1);
+    } else {
+        stageNames[sec] = stageNames[sec] + 1;
+    }
+    return true;
+}.iterate()
+
+def msg = "";
+stageNames.each {stageName, count ->
+        if (count > 1) {
+                msg = msg + "Sequencia \"${stageName}\" repetida ${count} veces "
+        }
+}
+
+if (msg != "") {
+        compliance.failure(msg)
+}

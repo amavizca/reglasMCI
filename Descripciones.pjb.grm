@@ -2,10 +2,11 @@
  * Verifica que un job tenga descripciones
  */
 
-def stageDesc = item.graph.V.Annotation.count()
+def sDes = item.shortDescription
+def lDes = item.longDescription
 
-if (stageDesc > 0) {
-    compliance.failure("Job No tiene descripciones. ${stageDesc}")
-}
+if (sDes == null) compliance.failure("Debe haber descripciones cortas")
+if (lDes == null) compliance.failure("Debe haber descripciones largas")
 
+if (item.graph.V.has("type","annotation").count() == 0) compliance.failure(" Debe haber anotaciones ")
 
